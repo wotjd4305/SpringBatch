@@ -1,0 +1,57 @@
+spring:
+  profiles:
+    active: local
+
+log:
+  path: /home/da/server/web/log
+  appender: console
+  name: gateway.log
+  pattern: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%thread] [%X{identity}] %msg %n"
+
+#혹시라도 값이 없을때 모든 배치가 실행되지 않게
+spring.batch.job.names: ${job.name:NONE}
+
+#Reader에서 어떻게 쿼리가 생성되고 실행되는지 확인하기 위한 Log Level 변경
+#logging:
+#  level:
+#    org:
+#      springframework:
+#        batch : DEBUG
+
+#8080 포트 충돌, 배치를 여러번 실행시 톰캣이 제대로 셧다운 시키지못해서
+main:
+  web-application-type: none
+
+---
+spring:
+  profiles: local
+  datasource:
+    hikari:
+      jdbc-url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+      username: sa
+      password:
+      driver-class-name: org.h2.Driver
+---
+spring:
+  profiles: mysql
+  datasource:
+    hikari:
+      jdbc-url: jdbc:mysql://localhost:3306/spring_batch
+      username: jojoldu
+      password: jojoldu1
+      driver-class-name: com.mysql.jdbc.Driver
+---
+spring:
+  profiles: oracle
+  datasource:
+    hikari:
+      driver-class-name: oracle.jdbc.OracleDriver
+      jdbcUrl: jdbc:oracle:thin:@localhost:1521:xe
+      username: HR
+      password: abc123
+      initSQL: SELECT 1 FROM DUAL
+      validationQuery: SELECT 1 FROM DUAL
+      connection-test-query: SELECT 1 FROM DUAL
+      testWhileIdle: true
+      timeBetweenEvictionRunsMillis: 30000
+

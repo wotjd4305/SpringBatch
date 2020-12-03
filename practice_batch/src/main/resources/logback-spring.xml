@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+
+	<!-- yml 단계에 데이터를 정의 -->
+	<springProperty scope="context" name="LOG_PATH" source="log.path" />
+	<springProperty scope="context" name="LOG_NAME" source="log.name" />
+	<springProperty scope="context" name="LOG_PATTERN" source="log.pattern" />
+	<springProperty scope="context" name="LOG_APPENDER" source="log.appender" />
+
+	<!-- 콘솔에 로그 -->
+	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>${LOG_PATTERN}</pattern>
+			<charset>utf8</charset>
+		</encoder>
+	</appender>
+
+	<!-- 파일에 로그 -->
+	<appender name="dailyRollingFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<prudent>true</prudent>
+		<file>${LOG_PATH}/${LOG_NAME}</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_PATH}/${LOG_NAME}.%d{yyyy-MM-dd}</fileNamePattern>
+			<!-- 30일 보관 -->
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<!-- 필터(디버그 인것 만) -->
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>DEBUG</level>
+		</filter>
+		<encoder>
+			<pattern>${LOG_PATTERN}</pattern>
+		</encoder>
+	</appender>
+
+	<!-- jdbc logback 설정 -->
+	<logger name="jdbc" level="OFF" />
+	<logger name="org.springframework.web" level="INFO" />
+	<logger name="org.thymeleaf" level="INFO" />
+	<logger name="org.quartz.core" level="INFO" />
+	<logger name="org.h2.server.web" level="INFO" />
+
+	<!-- INFO 레벨의 로그를 LOG_APPENDER 남김 -->
+	<root level="INFO">
+		<appender-ref ref="${LOG_APPENDER}" />
+	</root>
+</configuration>
